@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>A-Frame Measurement Mode</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script defer src="scripts/model-loader.js"></script>
@@ -11,6 +12,11 @@
   </head>
   <body>
     <a-scene>
+      <a-assets>
+        <img id="sky" src="assets/skybox.png">
+      </a-assets>
+        <a-sky src="#sky"></a-sky>
+
       <!-- Camera Rig for Movement and Controls -->
       <a-entity id="rig" position="0 1.6 0">
         <a-entity camera wasd-controls look-controls></a-entity>
@@ -25,9 +31,6 @@
 
       <!-- Ground -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="#aaaaaa"></a-plane>
-
-      <!-- Sky -->
-      <a-sky color="#ECECEC"></a-sky>
 
       <!-- VR Hand Controllers -->
       <a-entity oculus-touch-controls="hand: left" class="left-hand"></a-entity>

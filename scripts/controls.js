@@ -32,13 +32,9 @@ AFRAME.registerComponent('vr-controls', {
   handleThumbstick: function (evt) {
     const rig = document.querySelector('#rig');
     const direction = evt.detail;
-    const camera = rig.querySelector('[camera]'); // Get the camera entity
-    
     if (this.el.classList.contains('left-hand')) {
       rig.object3D.position.x += direction.x * this.data.speed;
       rig.object3D.position.z += direction.y * this.data.speed;
-      camera.object3D.position.x = rig.object3D.position.x; // Sync camera's X position with rig
-      camera.object3D.position.z = rig.object3D.position.z; // Sync camera's Z position with rig
     }
     if (this.el.classList.contains('right-hand')) {
       rig.object3D.rotation.y -= direction.x * 0.05;
@@ -54,9 +50,9 @@ document.addEventListener('keydown', (event) => {
   const camera = rig.querySelector('[camera]'); // Get the camera entity
   if (event.key === 'q') {
     rig.object3D.position.y = Math.max(0, rig.object3D.position.y - 0.1);
-    camera.object3D.position.y = Math.max(0, camera.object3D.position.y - 0.1); // Update the camera's Y position
+    camera.object3D.position.y = rig.object3D.position.y;
   } else if (event.key === 'e') {
     rig.object3D.position.y += 0.1;
-    camera.object3D.position.y += 0.1; // Update the camera's Y position
+    camera.object3D.position.y = rig.object3D.position.y;
   }
 });

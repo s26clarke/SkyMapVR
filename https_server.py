@@ -1,7 +1,13 @@
-import ssl
-import socket
 import os
+import ssl
 from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+# Custom handler to add Cache-Control headers
+class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        # Add Cache-Control header before sending response headers
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+        super().end_headers()  # Call the parent method to send other headers
 
 def generate_cert():
     from cryptography import x509
@@ -23,13 +29,12 @@ def generate_cert():
     )
 
     # Generate a self-signed certificate
-    subject = issuer = x509.Name([
-        x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
-        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"California"),
-        x509.NameAttribute(NameOID.LOCALITY_NAME, u"San Francisco"),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Python HTTPS Example"),
-        x509.NameAttribute(NameOID.COMMON_NAME, u"localhost"),
-    ])
+    subject = issuer = x509.Name([x509.NameAttribute(NameOID.COUNTRY_NAME, u"US"),
+                                  x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, u"California"),
+                                  x509.NameAttribute(NameOID.LOCALITY_NAME, u"San Francisco"),
+                                  x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"Python HTTPS Example"),
+                                  x509.NameAttribute(NameOID.COMMON_NAME, u"localhost"),
+                                  ])
     cert = x509.CertificateBuilder().subject_name(subject).issuer_name(issuer).public_key(
         private_key.public_key()).serial_number(x509.random_serial_number()).not_valid_before(
         datetime.datetime.utcnow()).not_valid_after(
@@ -54,13 +59,13 @@ def generate_cert():
 
 generate_cert()
 
-# Create an HTTPS server
-httpd = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+# Create an HTTPS server with the custom request handler
+httpd = HTTPServer(('0.0.0.0', 8000), CustomHTTPRequestHandler)
 
 httpd.socket = ssl.wrap_socket(
-    httpd.socket, 
-    keyfile="certs/key.pem", 
-    certfile="certs/cert.pem", 
+    httpd.socket,
+    keyfile="certs/key.pem",
+    certfile="certs/cert.pem",
     server_side=True
 )
 
