@@ -81,20 +81,6 @@ function updateRay() {
    });
   }
 
-console.log("Objects being raycasted:", sceneObjects);
-
-sceneObjects.forEach((obj, index) => {
-  console.log(`Mesh ${index}:`, obj.geometry);
-});
-
-
-  const intersects = raycaster.intersectObjects(sceneObjects, true);
-  console.log("Raycaster Origin:", raycaster.ray.origin);
-  console.log("Raycaster Direction:", raycaster.ray.direction);
-  console.log("Intersection Results:", intersects);
-
-
-
   let rayInfo = '';
 
   if (intersects.length > 0) {
@@ -197,7 +183,7 @@ function animate() {
   const camera = document.querySelector('[camera]');
   if (camera && camera.object3D) {
     const pos = camera.object3D.position;
-    console.log(`Live Camera Position: X=${pos.x.toFixed(2)}, Y=${pos.y.toFixed(2)}, Z=${pos.z.toFixed(2)}`);
+    //console.log(`Live Camera Position: X=${pos.x.toFixed(2)}, Y=${pos.y.toFixed(2)}, Z=${pos.z.toFixed(2)}`);
   } else {
     console.warn("Camera not found or not initialized yet.");
   }

@@ -1,26 +1,47 @@
-let modelIndex = 1;
-const modelContainer = document.getElementById("model-container");
+// Register a custom A-Frame component to load PLY files
+AFRAME.registerComponent('load-ply', {
+  schema: { src: { type: 'string' } },
 
-function loadNextModel() {
-  const modelPath = `models/${modelIndex}.glb`;
-  const newModel = document.createElement("a-entity");
+  init: function () {
+    const loader = new THREE.PLYLoader();
+    const sceneEl = this.el.sceneEl;
+    const src = this.data.src;
 
-  newModel.setAttribute("gltf-model", `url(${modelPath})`);
-  newModel.setAttribute("position", "0 1 -3");
-  newModel.setAttribute("scale", "3 3 3");
+    if (!src) {
+      console.error('No PLY file source provided.');
+      return;
+    }
 
-  newModel.addEventListener("model-loaded", () => {
-    console.log("Model loaded:", modelPath);
-    document.dispatchEvent(new Event("modelReady")); // Custom event
-  });
+    loader.load(src, (geometry) => {
+      const material = new THREE.MeshStandardMaterial({
+        vertexColors: THREE.VertexColors  // Use vertex colors from PLY file
+      });
 
-  while (modelContainer.firstChild) {
-    modelContainer.removeChild(modelContainer.firstChild);
+      const mesh = new THREE.Mesh(geometry, material);
+      this.el.setObject3D('mesh', mesh);
+    });
   }
+});
+// Fetch the list of PLY files from the Python backend
 
-  modelContainer.appendChild(newModel);
-  modelIndex = modelIndex >= 3 ? 1 : modelIndex + 1;
-}
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('http://localhost:5000/get-ply-files')
+        .then(response => response.json())
+        .then(plyFiles => {
+            const container = document.querySelector('#model-container'); // Ensure correct ID
 
-setInterval(loadNextModel, 10000);
-loadNextModel();
+            if (!container) {
+                console.error("Error: #model-container element not found.");
+                return;
+            }
+
+            plyFiles.forEach(plyFile => {
+                const modelEntity = document.createElement('a-entity');
+                modelEntity.setAttribute('position', '0 3.5 -3');
+                modelEntity.setAttribute('rotation', '180 0 0');
+                modelEntity.setAttribute('gltf-model', `models/${plyFile}`); // Ensure correct path
+                container.appendChild(modelEntity);
+            });
+        })
+        .catch(error => console.error('Error loading PLY files:', error));
+});
