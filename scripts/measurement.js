@@ -45,7 +45,6 @@ function destroyRay(){
 function updateRay() {
   if (!raycaster || !line) return; // Check if raycaster and line exist
 
-
   // Get the camera's forward direction
   const cameraEntity = document.querySelector('[camera]');
   if (!cameraEntity) {
@@ -57,7 +56,7 @@ function updateRay() {
   const direction = new THREE.Vector3();
   camera.getWorldDirection(direction); // This gives the forward vector (already normalized)
 
-  //Set raycaster origin to be at camera
+  // Set raycaster origin to be at the camera
   raycaster.ray.origin.copy(camera.position);
 
   // Do not invert the direction; we want the ray to extend in the same direction as the camera looks.
@@ -72,14 +71,17 @@ function updateRay() {
 
   if (modelEntity && modelEntity.object3D) {
     modelEntity.object3D.traverse((child) => {
-    if (child.isMesh) {
-      child.material.side = THREE.DoubleSide; // Ensure it's visible from both sides
-      child.castShadow = true;
-      child.receiveShadow = true;
-      sceneObjects.push(child);
-     }
-   });
+      if (child.isMesh) {
+        child.material.side = THREE.DoubleSide; // Ensure it's visible from both sides
+        child.castShadow = true;
+        child.receiveShadow = true;
+        sceneObjects.push(child);
+      }
+    });
   }
+
+  // Perform raycasting on all scene objects
+  const intersects = raycaster.intersectObjects(sceneObjects, true); // True for checking all descendants
 
   let rayInfo = '';
 
@@ -103,7 +105,6 @@ function updateRay() {
     line.geometry.attributes.position.needsUpdate = true;
   } else {
     // If no intersection, extend the ray to the calculated end point (200 units ahead)
-    // Ray Direction: (${raycaster.ray.direction.x.toFixed(2)}, ${raycaster.ray.direction.y.toFixed(2)}, ${raycaster.ray.direction.z.toFixed(2)})<br>
     rayInfo = `
       Ray Origin: (${raycaster.ray.origin.x.toFixed(2)}, ${raycaster.ray.origin.y.toFixed(2)}, ${raycaster.ray.origin.z.toFixed(2)})<br>
       Ray Extended to: (${endPoint.x.toFixed(2)}, ${endPoint.y.toFixed(2)}, ${endPoint.z.toFixed(2)})<br>
@@ -127,6 +128,7 @@ function updateRay() {
     <p>${rayInfo}</p>
   `;
 }
+
 
 // Toggle measurement mode on 'M' key press and reset on 'R'
 document.addEventListener('keydown', (event) => {
