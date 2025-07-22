@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame with PLY Loader</title>
+
+    <!-- Include A-Frame -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+
+    <!-- Include your custom scripts -->
+    <script defer src="scripts/model-loader.js"></script>
+
+    <script src="scripts/controls.js"></script>
+    <script src="scripts/measurement.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/examples/js/loaders/PLYLoader.js"></script>
+
+</head>
+<body>
+<a-scene force-exit-vr vr-mode-ui="enabled: true" renderer="antialias: true; logarithmicDepthBuffer: true;">
+
+    <!-- Skybox -->
+    <a-assets>
+        <img id="sky" src="assets/skybox.png">
+    </a-assets>
+    <a-sky src="#sky"></a-sky>
+
+    <a-assets>
+        <img id="cube-texture" src="assets/weezered.jpg" />
+    </a-assets>
+    <a-box position="25 2 25" width="1" height="1" depth="1" src="#cube-texture"></a-box>
+
+
+    <!-- Camera Rig for Movement and Controls -->
+    <a-entity id="rig" position="0 1.6 0">
+        <a-entity camera wasd-controls look-controls></a-entity>
+    </a-entity>
+
+    <!-- Dynamic GLTF Model Container -->
+    <a-entity id="model-container"></a-entity>
+
+    <!-- Lights -->
+    <a-light type="ambient" intensity="0.8"></a-light>
+    <a-light type="directional" intensity="0.5" position="5 10 -10"></a-light>
+
+    <!-- Ground -->
+    <a-plane position="0 0 0" rotation="-90 0 0" width="50" height="50" color="#FFFFFF"></a-plane>
+
+    <!-- VR Hand Controllers -->
+    <a-entity oculus-touch-controls="hand: left" class="left-hand"></a-entity>
+    <a-entity oculus-touch-controls="hand: right" class="right-hand"></a-entity>
+
+    <!-- Distance Measurement -->
+    <a-entity id="measurement-system" measurement-tool></a-entity>
+</a-scene>
+
+<!-- Debug Information -->
+<div id="debug-info"
+     style="position: fixed; bottom: 20px; right: 20px; background: rgba(0, 0, 0, 0.6); padding: 10px; border-radius: 5px; color: white; font-size: 16px; font-family: Arial, sans-serif;">
+    <p>Measurement Mode: <span id="mode-status">OFF</span></p>
+    <p>Distance: <span id="distance">N/A</span></p>
+</div>
+</body>
+</html>
+
+
