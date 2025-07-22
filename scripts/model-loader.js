@@ -48,7 +48,7 @@ AFRAME.registerComponent('load-ply', {
 // Fetch the list of PLY files from the Python backend
 document.addEventListener('DOMContentLoaded', function () {
   //fetch('https://172.20.10.2:5000/get-ply-files')
-  fetch('https://192.168.0.109:5000/get-ply-files')
+  fetch('https://172.20.10.2:5000/get-ply-files')
     .then(response => response.json())
     .then(plyFiles => {
       console.log('PLY Files:', plyFiles);  // Log the list of PLY files

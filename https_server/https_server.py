@@ -61,7 +61,7 @@ def generate_cert():
 generate_cert()
 
 # Create HTTPS server
-server_address = ('0.0.0.0', 8000)
+server_address = ('0.0.0.0', 8080)
 httpd = HTTPServer(server_address, CustomHTTPRequestHandler)
 
 # Use SSLContext instead of ssl.wrap_socket
@@ -69,5 +69,5 @@ context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 context.load_cert_chain(certfile="certs/cert.pem", keyfile="certs/key.pem")
 httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
 
-print("Serving HTTPS on https://localhost:8000")
+print("Serving HTTPS on https://localhost:8080")
 httpd.serve_forever()
